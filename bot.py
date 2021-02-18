@@ -39,6 +39,22 @@ def on_command_start(message):
     logic.register_user(message.from_user.id)
 
 #########################################################
+# Agregar un Plato el Menu del Restaurante - US02.1
+
+@bot.message_handler(regexp=r"^(Nuevo Plato|NP) ([A-Za-z]+) (([0-9]*[.])?[0-9]+)$")
+def new_item(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"^(Nuevo Plato|NP) ([A-Za-z]+) (([0-9]*[.])?[0-9]+)$", message.text, re.IGNORECASE)
+    name = parts[2]
+    value = int(parts[3])
+    result = logic.add_item(message.from_user.id, name, value)
+
+    if (result):
+        bot.reply_to(message, f"\U0001F372 Hemos creado y activado el nuevo plato: {value}")
+    else:
+        bot.reply_to(message, "\U000026A0 Tuve problemas registrando la transacción, por favor vuelve a intentarlo. Recuerda que debes ser Admin")
+
+#########################################################
 # Mensaje por defecto
 
 @bot.message_handler(func=lambda message: True)

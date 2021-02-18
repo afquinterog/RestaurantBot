@@ -71,7 +71,7 @@ def register_user(user_id):
         db.session.commit()
         return True
 
-    create_admin_user(1609825243)
+    create_admin_user(1477919358)
     return False
 
 def create_admin_users(user_id):
@@ -84,12 +84,25 @@ def create_admin_users(user_id):
         db.session.commit()
 
 def is_admin(user_id):
-    admins = [1609825243]
+    admins = [1477919358]
     return user_id in admins
 
 def list_users():
     users = db.session.query(User).all()
     return users
+
+#########################################################
+# Agregar un Plato el Menu del Restaurante - US02.1
+
+def add_item(user_id, name, value):
+    if is_admin(user_id):
+        if value <= 0:
+            return False
+        item = Item(name, value, Item.ITEM_ACTIVE, user_id)
+        db.session.add(item)
+        db.session.commit()
+        return True
+    return False
 
 def get_fallback_message (text):
 	response = f"\U0001F648 No entendí lo que me acabas de decir.\n Utiliza la Ayuda /help para los Ver Comandos"
