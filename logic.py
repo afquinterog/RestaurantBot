@@ -104,6 +104,16 @@ def add_item(user_id, name, value):
         return True
     return False
 
+#########################################################
+# Ver los Platos del Menu del Restaurante - US01
+
+def list_items(user_id):
+    items = db.session.query(
+        Item
+        ).all()
+    db.session.commit()
+    return items
+
 def get_fallback_message (text):
 	response = f"\U0001F648 No entendí lo que me acabas de decir.\n Utiliza la Ayuda /help para los Ver Comandos"
 	return response
