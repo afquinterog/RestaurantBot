@@ -128,15 +128,20 @@ def add_basket(user_id, index, quantity):
     item = getItemById(index, user_id)
 
     if item and item.status == Item.ITEM_ACTIVE:
-        #Code without refactor
+        
+        #Refactorizacion "Extract Function"
+        #URL: https://refactoring.com/catalog/extractFunction.html
+
         #######################################################
+
+        # Codigo Inicial sin la Refactorizacion
         #order.amount = order.amount + item.value
         # Add the order item
         #orderItem = OrderItem(item.id, order.id)
         #db.session.add(orderItem)
         #db.session.commit()
 
-        #Refactor code 
+        #Codigo Refactorizado No.01
         add_item_to_order(order, item, quantity)
         return item
     return False
@@ -234,7 +239,12 @@ def delete_order_item_by_id(order, index):
 def delete_item_from_basket(user_id, index):
     order = getUserBasket(user_id)
     
-    #Actual code 
+    #Refactorizacion "Extract Function"
+    #URL: https://refactoring.com/catalog/extractFunction.html
+    
+    #######################################################
+
+    #Codigo Antiguo
     # orderItem = db.session.query(
     #     OrderItem
     #     ).filter_by(
@@ -243,12 +253,12 @@ def delete_item_from_basket(user_id, index):
     #         id = index
     #     ).first()
 
-    #Refactor code 
+    #Codigo Refactorizado No.02
     orderItem = getOrderItemById(index, user_id)
     item = getItemById(orderItem.item_id, user_id)
     order.amount = order.amount - (item.value * orderItem.quantity)
 
-    #Actual code 
+    #Codigo Antigio
     # orderItem = db.session.query(
     #     OrderItem
     #     ).filter_by(
@@ -257,7 +267,7 @@ def delete_item_from_basket(user_id, index):
     #         id = index
     #     ).delete()
     
-    #Refactor code 
+    #Codigo Refactorizado No.03
     orderItem = delete_order_item_by_id(order, index)
     
     db.session.commit()
@@ -297,6 +307,21 @@ def mark_item_as_active(user_id, index):
             return None
         
         item.status = Item.ITEM_ACTIVE
+        db.session.commit()
+        return item
+    return False
+
+#########################################################
+# Inactivar los Platos del Menu del Restaurante - US02.3
+
+def mark_item_as_inactive(user_id, index):
+    if is_admin(user_id): 
+        item = getItemById(index, user_id)
+
+        if not item:
+            return None
+        
+        item.status = Item.ITEM_INACTIVE
         db.session.commit()
         return item
     return False

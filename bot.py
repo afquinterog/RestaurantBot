@@ -193,6 +193,21 @@ def mark_item_as_active(message):
         bot.reply_to(message, "\U000026A0 Tuve problemas registrando la transacción, por favor vuelve a intentarlo recuerda que debes ser un admin")
 
 #########################################################
+# Inactivar los Platos del Menu del Restaurante - US02.3
+
+@bot.message_handler(regexp=r"^(Inactivar Plato|IP) ([0-9]+)$")
+def mark_item_as_inactive(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"^(Inactivar Plato|IP) ([0-9]+)$", message.text, re.IGNORECASE)
+    index = int(parts[2])
+    result = logic.mark_item_as_inactive(message.from_user.id, index)
+
+    if (result):
+        bot.reply_to(message, f"\U0001F372 Hemos desactivado el plato del menu")
+    else:
+        bot.reply_to(message, "\U000026A0 Tuve problemas registrando la transacción, por favor vuelve a intentarlo recuerda que debes ser un admin")
+
+#########################################################
 # Mensaje por defecto
 
 @bot.message_handler(func=lambda message: True)
