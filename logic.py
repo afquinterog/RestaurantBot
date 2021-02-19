@@ -114,6 +114,66 @@ def list_items(user_id):
     db.session.commit()
     return items
 
+#########################################################
+# Agregar los Productos al Carrito de Compra - US03
+
+def add_basket(user_id, index, quantity):
+
+    order = getUserBasket(user_id)
+
+    if not order:
+        createBasket(user_id)
+        order = getUserBasket(user_id)
+
+    item = getItemById(index, user_id)
+
+    if item and item.status == Item.ITEM_ACTIVE:
+        #Code without refactor
+        #######################################################
+        #order.amount = order.amount + item.value
+        # Add the order item
+        #orderItem = OrderItem(item.id, order.id)
+        #db.session.add(orderItem)
+        #db.session.commit()
+
+        #Refactor code 
+        add_item_to_order(order, item, quantity)
+        return item
+    return False
+
+def add_item_to_order(order, item, quantity):
+    order.amount = order.amount + (item.value * quantity)
+    # Add the order item
+    orderItem = OrderItem(item.id, order.id, quantity)
+    db.session.add(orderItem)
+    db.session.commit()
+
+def getUserBasket(user_id):
+    order = db.session.query(
+        Order
+        ).filter_by(
+            user_id = user_id
+        ).filter_by(
+            status = Order.ORDER_BASKET
+        ).first()
+    db.session.commit()
+    return order
+
+def createBasket(user_id):
+    item = Order(user_id, Order.ORDER_BASKET)
+    db.session.add(item)
+    db.session.commit()
+    return True
+
+def getItemById(index, user_id):
+    item = db.session.query(
+        Item
+        ).filter_by(
+            id = index
+        ).first()
+    db.session.commit()
+    return item
+
 def get_fallback_message (text):
 	response = f"\U0001F648 No entendí lo que me acabas de decir.\n Utiliza la Ayuda /help para los Ver Comandos"
 	return response

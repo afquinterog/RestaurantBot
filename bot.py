@@ -76,6 +76,23 @@ def list_items(message):
     bot.reply_to(message, text, parse_mode="Markdown")
 
 #########################################################
+# Agregar los Productos al Carrito de Compra - US03
+
+@bot.message_handler(regexp=r"^(Hacer Pedido|HP) ([0-9]+) ([0-9]+)$")
+def add_basket(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"^(Hacer Pedido|HP) ([0-9]+) ([0-9]+)$", message.text, re.IGNORECASE)
+    index = int(parts[2])
+    quantity = int(parts[3])
+
+    addedItem = logic.add_basket(message.from_user.id, index, quantity)
+
+    if (addedItem):
+        bot.reply_to(message, f"\U0001F916 Hemos agregado el plato: \U0001F372 {addedItem.name} por ${addedItem.value * quantity} a tu pedido: ")
+    else:
+        bot.reply_to(message, "\U000026A0 Favor verificar que el plato se encuentre activo e intente de nuevo")
+
+#########################################################
 # Mensaje por defecto
 
 @bot.message_handler(func=lambda message: True)
