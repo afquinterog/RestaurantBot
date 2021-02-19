@@ -120,6 +120,20 @@ def list_items(message):
     bot.reply_to(message, text, parse_mode="Markdown")
 
 #########################################################
+# Comprar los Productos del Carrito - US06
+
+@bot.message_handler(regexp=r"^(Comprar|C)$")
+def buy_basket(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"^(Comprar|C)$", message.text, re.IGNORECASE)
+    result = logic.buyBasket(message.from_user.id)
+
+    if (result):
+        bot.reply_to(message, f"\U00002705 Felicitaciones has comprado tu pedido por un valor de  {result}. Vamos a comenzar a prepararlo. ")
+    else:
+        bot.reply_to(message, "\U000026A0 Tuve problemas registrando la transacción, por favor vuelve a intentarlo")
+
+#########################################################
 # Mensaje por defecto
 
 @bot.message_handler(func=lambda message: True)
