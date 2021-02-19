@@ -128,24 +128,17 @@ def add_basket(user_id, index, quantity):
     item = getItemById(index, user_id)
 
     if item and item.status == Item.ITEM_ACTIVE:
-        
-        #Refactorizacion "Extract Function"
-        #URL: https://refactoring.com/catalog/extractFunction.html
-        
+        #Code without refactor
         #######################################################
-        # Codigo Inicial sin la Refactorizacion
-        
         #order.amount = order.amount + item.value
         # Add the order item
         #orderItem = OrderItem(item.id, order.id)
         #db.session.add(orderItem)
         #db.session.commit()
 
-        #######################################################
-        # Codigo Final con la Refactorizacion
+        #Refactor code 
         add_item_to_order(order, item, quantity)
         return item
-
     return False
 
 def add_item_to_order(order, item, quantity):
@@ -211,6 +204,29 @@ def getOrderItemById(index, user_id):
         ).first()
     db.session.commit()
     return item
+
+#########################################################
+# Comprar los Productos del Carrito - US06
+
+def buyBasket(user_id):
+    basket = getUserBasket(user_id)
+
+    if basket:
+        basket.status = Order.ORDER_DONE
+        db.session.commit()
+        return basket.amount
+
+    return None
+    
+def delete_order_item_by_id(order, index):
+    orderItem = db.session.query(
+        OrderItem
+        ).filter_by(
+            order_id = order.id
+        ).filter_by(
+            id = index
+        ).delete()
+    return orderItem
 
 def get_fallback_message (text):
 	response = f"\U0001F648 No entendí lo que me acabas de decir.\n Utiliza la Ayuda /help para los Ver Comandos"
