@@ -301,21 +301,6 @@ def mark_item_as_active(user_id, index):
         return item
     return False
 
-#########################################################
-# Inactivar los Platos del Menu del Restaurante - US02.3
-
-def mark_item_as_inactive(user_id, index):
-    if is_admin(user_id): 
-        item = getItemById(index, user_id)
-
-        if not item:
-            return None
-        
-        item.status = Item.ITEM_INACTIVE
-        db.session.commit()
-        return item
-    return False
-
 def get_fallback_message (text):
 	response = f"\U0001F648 No entendí lo que me acabas de decir.\n Utiliza la Ayuda /help para los Ver Comandos"
 	return response
