@@ -1,4 +1,4 @@
-##########################################################
+#########################################################
 # Gestion de Paquetes
 import database.db as db
 from models.User import User
@@ -227,6 +227,42 @@ def delete_order_item_by_id(order, index):
             id = index
         ).delete()
     return orderItem
+
+#########################################################
+# Eliminar Plato del Carrito de Compra - US05
+
+def delete_item_from_basket(user_id, index):
+    order = getUserBasket(user_id)
+    
+    orderItem = db.session.query(
+         OrderItem
+         ).filter_by(
+             order_id = order.id
+         ).filter_by(
+             id = index
+         ).first()
+
+    orderItem = db.session.query(
+        OrderItem
+         ).filter_by(
+             order_id = order.id
+         ).filter_by(
+             id = index
+         ).delete()
+    
+    db.session.commit()
+    return orderItem
+
+def get_user_orders(user_id):
+    orders = db.session.query(
+        Order
+        ).filter_by(
+            user_id = user_id
+        ).filter(
+            Order.status > 0
+        ).all()
+    db.session.commit()
+    return orders
 
 def get_fallback_message (text):
 	response = f"\U0001F648 No entendí lo que me acabas de decir.\n Utiliza la Ayuda /help para los Ver Comandos"

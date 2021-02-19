@@ -134,6 +134,21 @@ def buy_basket(message):
         bot.reply_to(message, "\U000026A0 Tuve problemas registrando la transacción, por favor vuelve a intentarlo")
 
 #########################################################
+# Eliminar Plato del Carrito de Compra - US05
+
+@bot.message_handler(regexp=r"^(Eliminar Plato Pedido|EPP) ([0-9]+)$")
+def delete_item_from_basket(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"^(Eliminar Plato Pedido|EPP) ([0-9]+)$", message.text, re.IGNORECASE)
+    index = int(parts[2])
+    result = logic.delete_item_from_basket(message.from_user.id, index)
+
+    if (result):
+        bot.reply_to(message, f"\U00002705 Hemos eliminado el plato de tu pedido")
+    else:
+        bot.reply_to(message, "\U000026A0 Tuve problemas registrando la transacción, por favor vuelve a intentarlo")
+
+#########################################################
 # Mensaje por defecto
 
 @bot.message_handler(func=lambda message: True)
