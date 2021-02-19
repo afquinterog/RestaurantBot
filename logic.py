@@ -174,6 +174,37 @@ def getItemById(index, user_id):
     db.session.commit()
     return item
 
+#########################################################
+# Ver el Listado de Productos del Carrito - US04
+
+def getBasketItems(user_id):
+    order = getUserBasket(user_id)
+
+    if order:
+        orderItems = db.session.query(
+            OrderItem
+            ).filter_by(
+                order_id = order.id
+            ).all()
+        db.session.commit()
+
+        items = {}
+        for orderItem in orderItems:
+            item = getItemById(orderItem.item_id, user_id)
+            items[orderItem.id] = item
+        return items
+
+    return None
+
+def getOrderItemById(index, user_id):
+    item = db.session.query(
+        OrderItem
+        ).filter_by(
+            id = index
+        ).first()
+    db.session.commit()
+    return item
+
 def get_fallback_message (text):
 	response = f"\U0001F648 No entendí lo que me acabas de decir.\n Utiliza la Ayuda /help para los Ver Comandos"
 	return response

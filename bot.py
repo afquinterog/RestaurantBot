@@ -93,6 +93,33 @@ def add_basket(message):
         bot.reply_to(message, "\U000026A0 Favor verificar que el plato se encuentre activo e intente de nuevo")
 
 #########################################################
+# Ver el Listado de Productos del Carrito - US04
+
+@bot.message_handler(regexp=r"^(Pedido|P)$")
+def list_items(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"^(Pedido|P)$", message.text, re.IGNORECASE)
+
+    items = logic.getBasketItems(message.from_user.id)
+
+    if not items:
+        text = f"\U0001F916 No tienes platos registradas en el pedido actual"
+    else:
+        total = 0
+        text = "``` Platos en el pedido actual:\n\n"
+        for key in items:
+            item = items[key]
+            order_item = logic.getOrderItemById(key, message.from_user.id)
+            text += f"| {key} | {item.name} | ${item.value} * {order_item.quantity} \n"
+            total = total + (item.value * order_item.quantity)
+
+        text += "\n\n"
+        text += f"\U0001F4B0 Total del pedido es: {total}"
+        text += "```"
+    
+    bot.reply_to(message, text, parse_mode="Markdown")
+
+#########################################################
 # Mensaje por defecto
 
 @bot.message_handler(func=lambda message: True)
