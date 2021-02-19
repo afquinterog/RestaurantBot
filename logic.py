@@ -128,17 +128,24 @@ def add_basket(user_id, index, quantity):
     item = getItemById(index, user_id)
 
     if item and item.status == Item.ITEM_ACTIVE:
-        #Code without refactor
+        
+        #Refactorizacion "Extract Function"
+        #URL: https://refactoring.com/catalog/extractFunction.html
+        
         #######################################################
+        # Codigo Inicial sin la Refactorizacion
+        
         #order.amount = order.amount + item.value
         # Add the order item
         #orderItem = OrderItem(item.id, order.id)
         #db.session.add(orderItem)
         #db.session.commit()
 
-        #Refactor code 
+        #######################################################
+        # Codigo Final con la Refactorizacion
         add_item_to_order(order, item, quantity)
         return item
+
     return False
 
 def add_item_to_order(order, item, quantity):
