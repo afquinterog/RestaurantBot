@@ -149,6 +149,35 @@ def delete_item_from_basket(message):
         bot.reply_to(message, "\U000026A0 Tuve problemas registrando la transacción, por favor vuelve a intentarlo")
 
 #########################################################
+# Ver Historial de Compras - US07
+
+@bot.message_handler(regexp=r"^(Historial|H)$")
+def list_items(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"^(Historial|H)$", message.text, re.IGNORECASE)
+
+    orders = logic.get_user_orders(message.from_user.id)
+
+    if not orders:
+        text = f"\U0001F916 No tienes pedidos registrados en el sistema"
+    else:
+        total = 0
+        text = "``` Pedidos registrados:\n\n"
+        for order in orders:
+            order_items = logic.get_order_item_from_order(order)
+            if order_items:
+                for order_item in order_items:
+                    item = logic.getItemById(order_item.item_id, message.from_user.id)
+                    text += f"| {item.name} | {item.value} * {order_item.quantity} \n"
+            total = total + order.amount
+
+        text += "\n\n"
+        text += f"\U0001F4B0 El total de tus pedidos es: {total}"
+        text += "```"
+    
+    bot.reply_to(message, text, parse_mode="Markdown")
+
+#########################################################
 # Mensaje por defecto
 
 @bot.message_handler(func=lambda message: True)

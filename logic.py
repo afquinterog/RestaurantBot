@@ -234,21 +234,31 @@ def delete_order_item_by_id(order, index):
 def delete_item_from_basket(user_id, index):
     order = getUserBasket(user_id)
     
-    orderItem = db.session.query(
-         OrderItem
-         ).filter_by(
-             order_id = order.id
-         ).filter_by(
-             id = index
-         ).first()
+    #Actual code 
+    # orderItem = db.session.query(
+    #     OrderItem
+    #     ).filter_by(
+    #         order_id = order.id
+    #     ).filter_by(
+    #         id = index
+    #     ).first()
 
-    orderItem = db.session.query(
-        OrderItem
-         ).filter_by(
-             order_id = order.id
-         ).filter_by(
-             id = index
-         ).delete()
+    #Refactor code 
+    orderItem = getOrderItemById(index, user_id)
+    item = getItemById(orderItem.item_id, user_id)
+    order.amount = order.amount - (item.value * orderItem.quantity)
+
+    #Actual code 
+    # orderItem = db.session.query(
+    #     OrderItem
+    #     ).filter_by(
+    #         order_id = order.id
+    #     ).filter_by(
+    #         id = index
+    #     ).delete()
+    
+    #Refactor code 
+    orderItem = delete_order_item_by_id(order, index)
     
     db.session.commit()
     return orderItem
@@ -263,6 +273,18 @@ def get_user_orders(user_id):
         ).all()
     db.session.commit()
     return orders
+
+#########################################################
+# Ver Historial de Compras - US07
+
+def get_order_item_from_order(order):
+    orderItems = db.session.query(
+        OrderItem
+        ).filter_by(
+            order_id = order.id
+        ).all()
+
+    return orderItems
 
 def get_fallback_message (text):
 	response = f"\U0001F648 No entendí lo que me acabas de decir.\n Utiliza la Ayuda /help para los Ver Comandos"
